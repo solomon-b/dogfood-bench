@@ -29,14 +29,19 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: npm run build
-      # Commit the raw cache so the next run stays incremental.
+      # Commit the raw cache so the next run stays incremental. Pushes skip
+      # this step, so the bot never commits behind a person's push. The
+      # rebase keeps this run's data if main moved during the run.
       - name: Commit data
+        if: github.event_name != 'push'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/issues.json
-          git diff --cached --quiet || git commit -m "chore: Refreshes issue data."
-          git push
+          git diff --cached --quiet && exit 0
+          git commit -m "chore: Refreshes issue data."
+          git pull --rebase -X theirs origin main
+          git push origin HEAD:main
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
