@@ -1,0 +1,11 @@
+{
+  "name": "dogfood-bench",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "fetch": "node scripts/fetch.mjs",
+    "build": "node scripts/build.mjs",
+    "serve": "python3 -m http.server -d site 8080"
+  },
+  "engines": { "node": ">=22" }
+}

@@ -1,0 +1,7 @@
+[
+  { "date": "2025-02-24", "short": "3.7 Sonnet", "name": "Claude 3.7 Sonnet and the Claude Code preview" },
+  { "date": "2025-05-22", "short": "Claude 4", "name": "Claude Opus 4 and Claude Sonnet 4" },
+  { "date": "2025-08-05", "short": "Opus 4.1", "name": "Claude Opus 4.1" },
+  { "date": "2025-09-29", "short": "Sonnet 4.5", "name": "Claude Sonnet 4.5" },
+  { "date": "2025-11-24", "short": "Opus 4.5", "name": "Claude Opus 4.5" }
+]

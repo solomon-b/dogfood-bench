@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dogfood Bench</title>
+  <meta name="description" content="If AI makes engineers more productive, the issue tracker of an AI coding tool should show it. This benchmark checks.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <header>
+      <p class="eyebrow">Dogfood Bench</p>
+      <h1>Is Claude Code fixing its own issues faster?</h1>
+      <p class="lede">
+        Anthropic builds Claude Code with Claude Code. If AI makes software
+        engineers more productive, the effect should show up in the
+        <a id="repo-link" href="https://github.com/anthropics/claude-code/issues">claude-code issue tracker</a>.
+        This page measures it.
+      </p>
+    </header>
+
+    <section class="verdict" aria-live="polite">
+      <p class="verdict-label">Verdict, last <span id="trend-weeks">26</span> weeks</p>
+      <p class="verdict-text" id="verdict">Loading data.</p>
+      <p class="verdict-sub" id="verdict-sub"></p>
+    </section>
+
+    <section class="tiles" id="tiles"></section>
+
+    <section class="figure">
+      <h2>Fix rate</h2>
+      <p class="caption">Issues fixed in a week, divided by issues opened in that week. The dashed line is the least-squares trend over the verdict window.</p>
+      <div class="chart" id="chart-rate"></div>
+    </section>
+
+    <section class="figure">
+      <h2>Closures by kind</h2>
+      <p class="caption">Each week, issues opened (line) and issues closed (bars). Only "fixed" means a person shipped a change.</p>
+      <div class="legend" id="legend-closures"></div>
+      <div class="chart" id="chart-closures"></div>
+    </section>
+
+    <section class="figure">
+      <h2>Open backlog</h2>
+      <p class="caption">Open issues at the end of each week.</p>
+      <div class="chart" id="chart-backlog"></div>
+    </section>
+
+    <section class="figure">
+      <h2>Fixed within 30 days</h2>
+      <p class="caption">Of the issues opened in a week, the share that a human fixed within 30 days. Weeks less than 30 days old are left out.</p>
+      <div class="chart" id="chart-cohort"></div>
+    </section>
+
+    <section class="figure">
+      <h2>Median days to fix</h2>
+      <p class="caption">For issues fixed in a week, the median time from open to close.</p>
+      <div class="chart" id="chart-days"></div>
+    </section>
+
+    <section class="method">
+      <h2>Method</h2>
+      <p>
+        A script reads every issue in the repository from the GitHub API. It
+        records when each issue opened, when it closed, the close reason, and
+        who closed it. Each closure goes into one bucket.
+      </p>
+      <dl>
+        <dt>Fixed</dt><dd>Closed as completed by a person who did not open the issue.</dd>
+        <dt>Declined</dt><dd>Closed as not planned or duplicate by a person who did not open the issue.</dd>
+        <dt>Closed by author</dt><dd>The reporter closed it. The reason is unknown.</dd>
+        <dt>Bot sweep</dt><dd>A bot closed it, usually as stale, invalid, or duplicate.</dd>
+      </dl>
+      <p>
+        Only fixed issues count as evidence of work. The page uses complete
+        UTC weeks only. Vertical lines mark model releases. The data
+        refreshes daily. Last fetch: <span id="fetched-at">unknown</span>.
+      </p>
+      <p>
+        Limits: the "completed" reason is set by the person who closes the
+        issue, and some issues close as completed with no fix. Issue volume
+        also grows with the user count, so a falling fix rate can mean
+        popularity, not decline. This is a half serious benchmark.
+      </p>
+      <details>
+        <summary>Weekly data table</summary>
+        <div class="table-wrap"><table id="table"></table></div>
+      </details>
+    </section>
+
+    <footer>
+      <p>Not affiliated with Anthropic. Source on GitHub.</p>
+    </footer>
+  </main>
+  <div class="tooltip" id="tooltip" role="status" hidden></div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+data/*.tmp
+site/data.json
+node_modules/
+.direnv/
