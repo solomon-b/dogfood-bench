@@ -87,6 +87,7 @@ h2 { font-size: 18px; margin: 0 0 4px; }
 }
 
 .lede { color: var(--ink-2); max-width: 62ch; margin: 0; }
+.caveat { color: var(--muted); font-size: 14px; max-width: 62ch; margin: 12px 0 0; }
 .caption { color: var(--ink-2); font-size: 14px; margin: 0 0 12px; max-width: 70ch; }
 
 /* ------------------------------------------------------------------------ */
