@@ -40,7 +40,7 @@
 
     <section class="figure">
       <h2>Closures by kind</h2>
-      <p class="caption">Each week, issues opened (line) and issues closed (bars). Only "fixed" means a person shipped a change.</p>
+      <p class="caption">Each week, issues opened (line) and issues closed (bars). Only "fixed" counts as a fix.</p>
       <div class="legend" id="legend-closures"></div>
       <div class="chart" id="chart-closures"></div>
     </section>
@@ -53,7 +53,7 @@
 
     <section class="figure">
       <h2>Fixed within 30 days</h2>
-      <p class="caption">Of the issues opened in a week, the share that a human fixed within 30 days. Weeks less than 30 days old are left out.</p>
+      <p class="caption">Of the issues opened in a week, the share fixed within 30 days. Weeks less than 30 days old are left out.</p>
       <div class="chart" id="chart-cohort"></div>
     </section>
 
@@ -67,14 +67,14 @@
       <h2>Method</h2>
       <p>
         A script reads every issue in the repository from the GitHub API. It
-        records when each issue opened, when it closed, the close reason, and
-        who closed it. Each closure goes into one bucket.
+        records when each issue opened, when it closed, and the close reason.
+        Each closure goes into one bucket by its reason. Who closed the issue
+        does not matter, because the fixes supposedly come from AI anyway.
       </p>
       <dl>
-        <dt>Fixed</dt><dd>Closed as completed by a person who did not open the issue.</dd>
-        <dt>Declined</dt><dd>Closed as not planned or duplicate by a person who did not open the issue.</dd>
-        <dt>Closed by author</dt><dd>The reporter closed it. The reason is unknown.</dd>
-        <dt>Bot sweep</dt><dd>A bot closed it, usually as stale, invalid, or duplicate.</dd>
+        <dt>Fixed</dt><dd>Closed as completed, and not labeled invalid.</dd>
+        <dt>Duplicate</dt><dd>Closed as a duplicate of another issue.</dd>
+        <dt>Not planned</dt><dd>Closed as not planned, or labeled invalid. Most of these are bot sweeps of stale issues.</dd>
       </dl>
       <p>
         Only fixed issues count as evidence of work. The page uses complete
@@ -82,8 +82,9 @@
         refreshes daily. Last fetch: <span id="fetched-at">unknown</span>.
       </p>
       <p>
-        Limits: the "completed" reason is set by the person who closes the
-        issue, and some issues close as completed with no fix. Issue volume
+        Limits: "completed" is the default reason when someone closes an
+        issue on GitHub. Some issues close as completed with no fix, for
+        example when the reporter gives up. Issue volume
         also grows with the user count, so a falling fix rate can mean
         popularity, not decline. This is a half serious benchmark.
       </p>

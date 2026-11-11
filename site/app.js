@@ -189,9 +189,8 @@ function chart(el, weeks, releases, spec) {
 
 const CLOSURES = [
   { key: "fixed", label: "Fixed", color: "--series-1" },
-  { key: "declined", label: "Declined", color: "--series-2" },
-  { key: "self", label: "Closed by author", color: "--series-3" },
-  { key: "swept", label: "Bot sweep", color: "--series-4" },
+  { key: "duplicate", label: "Duplicate", color: "--series-2" },
+  { key: "notPlanned", label: "Not planned", color: "--series-3" },
 ];
 const OPENED = { key: "opened", label: "Opened", color: "--ink" };
 
@@ -223,9 +222,8 @@ function table(weeks) {
     ["Week", (w) => w.week],
     ["Opened", (w) => int(w.opened)],
     ["Fixed", (w) => int(w.fixed)],
-    ["Declined", (w) => int(w.declined)],
-    ["By author", (w) => int(w.self)],
-    ["Bot", (w) => int(w.swept)],
+    ["Duplicate", (w) => int(w.duplicate)],
+    ["Not planned", (w) => int(w.notPlanned)],
     ["Backlog", (w) => int(w.backlog)],
     ["Fix rate", (w) => pct(w.fixRate)],
     ["30-day", (w) => pct(w.cohortFixed30)],

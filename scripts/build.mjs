@@ -1,11 +1,12 @@
 // Reduces data/issues.json to the weekly series that the site draws, and
 // writes site/data.json.
 //
-// Every closure falls into exactly one bucket:
-//   fixed     closed as completed by a human who is not the author
-//   declined  closed as not planned or duplicate by a human who is not the author
-//   self      closed by the author of the issue
-//   swept     closed by a bot (stale, invalid, duplicate sweeps)
+// Every closure falls into exactly one bucket, from its close reason only.
+// Who closed the issue does not matter, because the premise is that the
+// fixes come from AI anyway.
+//   fixed       closed as completed, and not labeled invalid
+//   duplicate   closed as duplicate
+//   notPlanned  closed as not planned, or labeled invalid
 // Only "fixed" counts as evidence of engineering work.
 
 import { readFile, writeFile } from "node:fs/promises";
@@ -55,11 +56,11 @@ function slope(ys) {
   return num / den;
 }
 
-/** @returns {"fixed" | "declined" | "self" | "swept"} */
-function bucket(reason, closer) {
-  if (closer === "b") return "swept";
-  if (closer === "a") return "self";
-  return reason === "c" ? "fixed" : "declined";
+/** @returns {"fixed" | "duplicate" | "notPlanned"} */
+function bucket(reason, flags) {
+  if (reason === "d") return "duplicate";
+  if (reason === "n" || flags.includes("i")) return "notPlanned";
+  return "fixed";
 }
 
 // ---------------------------------------------------------------------------
@@ -78,20 +79,19 @@ for (let t = first; t <= last; t += WEEK) {
     start: t,
     opened: 0,
     fixed: 0,
-    declined: 0,
-    self: 0,
-    swept: 0,
+    duplicate: 0,
+    notPlanned: 0,
     fixDays: [],
     cohortFixed: 0,
   });
 }
 const index = (t) => Math.floor((weekStart(t) - first) / WEEK);
 
-for (const [created, closed, reason, closer] of issues) {
+for (const [created, closed, reason, , flags] of issues) {
   const o = weeks[index(created)];
   if (o) o.opened++;
   if (closed === null) continue;
-  const kind = bucket(reason, closer);
+  const kind = bucket(reason, flags);
   const c = weeks[index(closed)];
   if (c) {
     c[kind]++;
@@ -103,15 +103,14 @@ for (const [created, closed, reason, closer] of issues) {
 // Backlog is the count of open issues at the end of each week.
 let backlog = 0;
 const series = weeks.map((w) => {
-  backlog += w.opened - (w.fixed + w.declined + w.self + w.swept);
+  backlog += w.opened - (w.fixed + w.duplicate + w.notPlanned);
   const cohortDone = w.start + WEEK + COHORT_WINDOW <= now;
   return {
     week: new Date(w.start * 1000).toISOString().slice(0, 10),
     opened: w.opened,
     fixed: w.fixed,
-    declined: w.declined,
-    self: w.self,
-    swept: w.swept,
+    duplicate: w.duplicate,
+    notPlanned: w.notPlanned,
     backlog,
     fixRate: w.opened ? w.fixed / w.opened : null,
     medianDaysToFix: median(w.fixDays),
@@ -125,7 +124,7 @@ const series = weeks.map((w) => {
 const recent = series.slice(-HEADLINE_WEEKS);
 const sum = (xs, k) => xs.reduce((a, x) => a + x[k], 0);
 const trendWindow = series.slice(-TREND_WEEKS);
-const totals = { opened: 0, fixed: 0, declined: 0, self: 0, swept: 0 };
+const totals = { opened: 0, fixed: 0, duplicate: 0, notPlanned: 0 };
 for (const k of Object.keys(totals)) totals[k] = sum(series, k);
 
 const headline = {
